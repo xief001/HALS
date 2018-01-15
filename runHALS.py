@@ -52,6 +52,8 @@ print start_time
 # Step 1 MECAT1#########################
 if start_from_step <= 1:
 	print'''
+HALS: Fast and High Throughput Algorithm for PacBio Long Read Self-Correction
+
 /////STEP 1 STARTED//////////////////////////////////////////////////////////////////////////////////////////////////'''
 	if not os.path.exists(output_dir):
 		os.makedirs(output_dir)
