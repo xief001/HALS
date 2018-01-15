@@ -107,7 +107,7 @@ HALS: Fast and High Throughput Algorithm for PacBio Long Read Self-Correction
 		exit(-1)
 
 #####################################
-	HALS1_command = 'HALS 1 -c ' + temp_dir + '/step1/' + 'clique1.txt ' + ' -e ' + temp_dir + '/step1/' + 'edge1.txt ' + ' -r ' + temp_dir + '/step1/' + ' allreads.fasta ' + ' -m ' + temp_dir + '/step1/' +' allreads.fasta.m4 ' + ' -a ' + temp_dir + '/step1/' +' realireads1.fasta ' + ' -d ' + temp_dir + '/step1/' + 'deletepairs1.txt '
+	HALS1_command = 'HALS 1 -c ' + temp_dir + '/step1/' + 'clique1.txt ' + ' -e ' + temp_dir + '/step1/' + 'edge1.txt ' + ' -r ' + temp_dir + '/step1/' + 'allreads.fasta ' + ' -m ' + temp_dir + '/step1/' +'allreads.fasta.m4 ' + ' -a ' + temp_dir + '/step1/' +' realireads1.fasta ' + ' -d ' + temp_dir + '/step1/' + 'deletepairs1.txt '
 
 
 	print 'Running command: ' + HALS1_command
