@@ -262,9 +262,9 @@ void dfs(int d, int an, int sn, int nn,vector<adjacency_node*>&cliques_list,vect
 		{
 			for(int i=0;i<an;i++)
 			{
-				cout<<all[d][i]<<" ";
+				//cout<<all[d][i]<<" ";
 			}
-			cout<<endl;
+			//cout<<endl;
 		}
 		*/
 		++ S;

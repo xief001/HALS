@@ -1151,7 +1151,7 @@ void insert_clique_matrix()
 int count_files=0;
 void combine_cliques()
 {
-	cout<<"combine_cliques\n";
+	//cout<<"combine_cliques\n";
 	ofstream foutdelete;  
 
 	const char * outdeletefile;
@@ -1168,7 +1168,7 @@ void combine_cliques()
 			{
 				continue;
 			}
-			cout<<"combine_cliques\t"<<i<<"\t"<<j<<endl;
+			//cout<<"combine_cliques\t"<<i<<"\t"<<j<<endl;
 			int count=0;
 			double min=0;
 			if(cliqueslist[i].read_num<cliqueslist[j].read_num)
@@ -1658,7 +1658,7 @@ void create_readslist2()
 			{
 				if(count_reads2%100==0)
 				{
-					cout<<"count_reads2 = "<<count_reads2<<"\t"<<readname.c_str()<<endl;
+					//cout<<"count_reads2 = "<<count_reads2<<"\t"<<readname.c_str()<<endl;
 				}
 				readslist2[count_reads2].flag=0;
 				readslist2[count_reads2].info=NULL;
@@ -1805,7 +1805,7 @@ void readm4file2()
 			}
 			if(m4infolist2.size()%1000==0)
 			{
-				cout<<"m4infolist2.size() = "<<m4infolist2.size()<<endl;
+				//cout<<"m4infolist2.size() = "<<m4infolist2.size()<<endl;
 			}
 		}
 		else
@@ -1842,7 +1842,7 @@ void ali_raw_co()
 		}
 		if(i%100==0)
 		{
-			cout<<"ali_raw_co() : m4info = "<<m4infolist2.size()<<"   i = "<<i<<endl;
+			//cout<<"ali_raw_co() : m4info = "<<m4infolist2.size()<<"   i = "<<i<<endl;
 		}
 		for(int j=0;j<count_reads2;j++)
 		{
@@ -1935,7 +1935,7 @@ void insertflag_readslist2()
 			count_flag++;
 		}
 	}
-	cout<<count_flag<<endl;
+	//cout<<count_flag<<endl;
 }
 
 void readsalign2()
@@ -1945,7 +1945,7 @@ void readsalign2()
 	{
 		if(i%100==0)
 		{
-			cout<<m4infolist2.size()<<" "<<i<<endl;
+			//cout<<m4infolist2.size()<<" "<<i<<endl;
 		}
 		//for(int j=once_num;j<count_reads2;j++)
 		{
@@ -1974,7 +1974,7 @@ void readsalign2()
 	{
 		if(i%100==0)
 		{
-			cout<<"readsalign2()\t"<<m4infolist.size()<<"\t"<<i<<endl;
+			//cout<<"readsalign2()\t"<<m4infolist.size()<<"\t"<<i<<endl;
 		}
 		//for(int j=0;j<count_reads;j++)
 		{
@@ -2085,7 +2085,7 @@ void printreadslist2()
 }
 void HASAL2()
 {
-	cout<<"process HASAL2"<<endl;
+	//cout<<"process HASAL2"<<endl;
 	ofstream foutdelete;  
 
 	const char * outdeletefile;
@@ -2104,7 +2104,7 @@ void HASAL2()
 	{
 		if(readslist2[i].flag!=0)
 		{
-			cout<<"count_reads2 = "<<count_reads2<<"\tread "<<readslist2[i].read_ID<<endl;
+			//cout<<"count_reads2 = "<<count_reads2<<"\tread "<<readslist2[i].read_ID<<endl;
 			double PA,PB;
 			clique_node *s,*e;
 			s=readslist2[i].next;
@@ -2223,7 +2223,7 @@ void HASAL2()
 			
 		}
 	}
-	cout<<"process HASAL2 end"<<endl;
+	//cout<<"process HASAL2 end"<<endl;
 }
 
 void write_combinedreads()

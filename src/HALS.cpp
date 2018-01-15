@@ -146,10 +146,10 @@ int parseargs(int argc, char * argv[])
 
 int main(int argc,char * argv[])
 {
-	cout<<"begin"<<endl;
+	//cout<<"begin"<<endl;
 	parseargs(argc,argv);
-	cout<<"finish parseargs"<<endl;
+	//cout<<"finish parseargs"<<endl;
 	combine();
-	cout<<"finish combine"<<endl;
+	//cout<<"finish combine"<<endl;
 	return 0;
 }

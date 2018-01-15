@@ -359,11 +359,11 @@ int main(int argc,char* argv[])
 	f_del=fopen(filename2,"r");
 	
 	readdelfile();
-	cout<<"readdelfile();"<<endl;
+	//cout<<"readdelfile();"<<endl;
 	readorim4file();
-	cout<<"readorim4file();"<<endl;
+	//cout<<"readorim4file();"<<endl;
 	deleteedge();
-	cout<<"deleteedge();"<<endl;
+	//cout<<"deleteedge();"<<endl;
 	string newm4file="";
 	newm4file=argv[3];
 	const char* filename3;
@@ -371,6 +371,6 @@ int main(int argc,char* argv[])
 	
 	fout.open(filename3,ios::trunc);
 	writenewm4();
-	cout<<"writenewm4();"<<endl;
+	//cout<<"writenewm4();"<<endl;
 	return 0;
 }

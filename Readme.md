@@ -1,5 +1,5 @@
 ### Overview
-HALS is software that makes self-correction for long reads with high throughput.
+HALS is software that makes self-correction for long reads with fast speed and high  throughput.
 
 ### Copy right
 HALS is under the [Artistic License 2.0](http://opensource.org/licenses/Artistic-2.0).
@@ -11,9 +11,9 @@ HALS is under the [Artistic License 2.0](http://opensource.org/licenses/Artistic
 
 2. Installation
 
-   The MECAT self-correction and assembly software is required to run HALS.
+   The [MECAT](https://github.com/xiaochuanle/MECAT) self-correction and assembly software is required to run HALS.
    * The source files in 'src' folder can be complied to generate a 'bin' folder by running Makefile: make all.
-   * Put MECAT and the 'bin' folder to your $PATH: export PATH=PATH2MECAT:$PATH and export PATH=PATH2bin:$PATH, respectively.
+   * Put MECAT and the 'bin' folder to your $PATH: `export PATH=PATH2MECAT:$PATH` and `export PATH=PATH2bin:$PATH`, respectively.
 
 3. Inputs
    * Long reads in FASTA format.
