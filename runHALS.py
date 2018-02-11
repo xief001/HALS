@@ -52,9 +52,10 @@ print start_time
 # Step 1 MECAT1#########################
 if start_from_step <= 1:
 	print'''
-HALS: Fast and High Throughput Algorithm for PacBio Long Read Self-Correction
+HALS: Fast and High Throughput Algorithm for PacBio Long Read Self-Correction.
 
 /////STEP 1 STARTED//////////////////////////////////////////////////////////////////////////////////////////////////'''
+
 	if not os.path.exists(output_dir):
 		os.makedirs(output_dir)
 
@@ -107,7 +108,7 @@ HALS: Fast and High Throughput Algorithm for PacBio Long Read Self-Correction
 		exit(-1)
 
 #####################################
-	HALS1_command = 'HALS 1 -c ' + temp_dir + '/step1/' + 'clique1.txt ' + ' -e ' + temp_dir + '/step1/' + 'edge1.txt ' + ' -r ' + temp_dir + '/step1/' + 'allreads.fasta ' + ' -m ' + temp_dir + '/step1/' +'allreads.fasta.m4 ' + ' -a ' + temp_dir + '/step1/' +' realireads1.fasta ' + ' -d ' + temp_dir + '/step1/' + 'deletepairs1.txt '
+	HALS1_command = 'HALS 1 -c ' + temp_dir + '/step1/' + 'clique1.txt ' + ' -e ' + temp_dir + '/step1/' + 'edge1.txt ' + ' -r ' + temp_dir + '/step1/' + 'allreads.fasta ' + ' -m ' + temp_dir + '/step1/' +'allreads.fasta.m4 ' + ' -a ' + temp_dir + '/step1/' +'realireads1.fasta ' + ' -d ' + temp_dir + '/step1/' + 'deletepairs1.txt '
 
 
 	print 'Running command: ' + HALS1_command
@@ -155,6 +156,7 @@ HALS: Fast and High Throughput Algorithm for PacBio Long Read Self-Correction
 	if err != 0:
 		print 'ERROR: ' + 'Failed torun mecat2cns1:' + os.strerror(err)
 		exit(-1)
+
 #########################################
 	print '''
 /////STEP 1 DONE/////////////////////////////////////////////////////////////////////////////////////////////////////'''
@@ -209,10 +211,10 @@ if start_from_step <= 2:
 #############################################
 
 	mecat2pw4_command = ' mecat2pw -j 1 -t 16 -g 1 -x 0 -d ' + temp_dir + '/step2/' + 'cor_incor.fasta ' + ' -o ' + temp_dir + '/step2/' + 'cor_incor.fasta.m4 '+ ' -w ' + temp_dir + '/step2/' + 'tmpfold '
-	print 'Running command: ' + mecat2pw3_command
-	err = os.system(mecat2pw3_command)
+	print 'Running command: ' + mecat2pw4_command
+	err = os.system(mecat2pw4_command)
 	if err != 0:
-		print 'ERROR: ' + 'Failed torun mecat2pw3:' + os.strerror(err)
+		print 'ERROR: ' + 'Failed torun mecat2pw4:' + os.strerror(err)
 		exit(-1)
 
 	rm4_command = 'rm -rf ' + temp_dir + '/step2/' + 'tmpfold '
@@ -230,20 +232,20 @@ if start_from_step <= 2:
 		print 'ERROR: ' + 'Failed torun bronkerboschadj2:' + os.strerror(err)
 		exit(-1)
 ############################################
-	FN1=0
+	
+	
 
-	FN1_command = 'FN1=$(wc -l < ' + temp_dir + '/step1/' + 'allreads0_corrected_filted1.fasta '
+	FN1_command = temp_dir + '/step1/' + 'allreads0_corrected_filted1.fasta'
 	print 'Running command: ' + FN1_command
-	err = os.system(FN1_command)
-
-	if err != 0:
-		print 'ERROR: ' + 'Failed torun FN1:' + os.strerror(err)
-		exit(-1)
-
+	contents=open(FN1_command,"r").read()
+	FN1= contents.count("\n")
+	 
+	
+	
 
 ##########################################
 
-	HALS2_command = 'HALS 2 $FN1 -c ' + temp_dir + '/step2/' + 'clique2.txt ' + ' -e ' + temp_dir + '/step2/' + 'edge2.txt ' + ' -r ' + temp_dir + '/step1/' + 'allreads0_corrected_filted1.fasta ' + ' -m ' + temp_dir + '/step2/' +'allreads0_corrected_filted1.fasta.m4 ' + ' -de2 ' + temp_dir + '/step2/' +'deletepairs2.txt ' + ' -de3 ' + temp_dir + '/step2/' + 'deletepairs3.txt '+ ' -w ' + temp_dir + '/step2/' + 'cor_incor.fasta ' + ' -g ' + temp_dir + '/step2/' + 'cor_incor.fasta.m4 '+'-f1 '+args.f1+' -f2 '+args.f2+' -d1 '+args.d1+' -d2 '+args.d2
+	HALS2_command = 'HALS 2 '+ str(FN1) +  ' -c ' + temp_dir + '/step2/' + 'clique2.txt ' + ' -e ' + temp_dir + '/step2/' + 'edge2.txt ' + ' -r ' + temp_dir + '/step1/' + 'allreads0_corrected_filted1.fasta ' + ' -m ' + temp_dir + '/step2/' +'allreads0_corrected_filted1.fasta.m4 ' + ' -de2 ' + temp_dir + '/step2/' +'deletepairs2.txt ' + ' -de3 ' + temp_dir + '/step2/' + 'deletepairs3.txt '+ ' -w ' + temp_dir + '/step2/' + 'cor_incor.fasta ' + ' -g ' + temp_dir + '/step2/' + 'cor_incor.fasta.m4 '+'-f1 '+str(args.f1)+' -f2 '+str(args.f2)+' -d1 '+str(args.d1)+' -d2 '+str(args.d2)
 	print 'Running command: ' + HALS2_command
 	err = os.system(HALS2_command)
 	if err != 0:
