@@ -7,10 +7,10 @@ import datetime
 
 parser = argparse.ArgumentParser(description='runHALC.py')
 parser.add_argument('long_read_path', metavar='long_read.fa', help="The path to long_read.fa")
-parser.add_argument("-f1",help="Fraction value to distinguish between the cases (i)/(ii) and (iii).(0.5)", default=0.5,type=float)
-parser.add_argument('-f2',help="Fraction value to distinguish between the cases (i) and (ii).(0.5)", default=0.5,type=float)
-parser.add_argument('-d1', help="Difference value of alignment identities to find the correct aligned path.(0.05)", default=0.05,type=float)
-parser.add_argument('-d2', help="Difference value of expected amounts of aligned long reads to find the correct aligned path.(0.2)", default=0.2,type=float)
+parser.add_argument("-a1",help="Fraction value to distinguish between the cases (i)/(ii) and (iii).(0.5)", default=0.5,type=float)
+parser.add_argument('-a2',help="Fraction value to distinguish between the cases (i) and (ii).(0.5)", default=0.5,type=float)
+parser.add_argument('-b1', help="Difference value of alignment identities to find the correct aligned path.(0.05)", default=0.05,type=float)
+parser.add_argument('-b2', help="Difference value of expected amounts of aligned long reads to find the correct aligned path.(0.2)", default=0.2,type=float)
 args = parser.parse_args()
 
 # Default Parameters#####################################
@@ -21,7 +21,7 @@ repeat_free_mode = False
 
 if os.path.exists(temp_dir + '/step1'):
 	if os.path.exists(temp_dir + '/step2'):
-		print 'WARNING: ' + temp_dir + '/step2' + ' was found. Automatically started from step5'
+		print 'WARNING: ' + temp_dir + '/step2' + ' was found. Automatically started from step2'
 		shutil.rmtree(temp_dir + '/step2')
 		start_from_step = 2
 	else:
@@ -34,16 +34,16 @@ else:
 long_read_path = args.long_read_path
 
 if args.f1 > 1 or args.f1 < 0:
-	print 'ERROR: argument -f1  INVALID INPUT PARAMETER (should be between 0 and 1)!'
+	print 'ERROR: Argument -f1  INVALID INPUT PARAMETER (should be between 0 and 1)!'
 	exit(-1)
 if args.f2 > 1 or args.f2 < 0:
-	print 'ERROR: argument -f2  INVALID INPUT PARAMETER (should be between 0 and 1)!'
+	print 'ERROR: Argument -f2  INVALID INPUT PARAMETER (should be between 0 and 1)!'
 	exit(-1)
 if args.d1 > 1 or args.d1 < 0:
-	print 'ERROR: argument -d1  INVALID INPUT PARAMETER (should be between 0 and 1)!'
+	print 'ERROR: Argument -d1  INVALID INPUT PARAMETER (should be between 0 and 1)!'
 	exit(-1)
 if args.d2 > 1 or args.d2 < 0:
-	print 'ERROR: argument -d2  INVALID INPUT PARAMETER (should be between 0 and 1)!'
+	print 'ERROR: Argument -d2  INVALID INPUT PARAMETER (should be between 0 and 1)!'
 	exit(-1)
 
 start_time = datetime.datetime.now()
@@ -63,7 +63,7 @@ HALS: Fast and High Throughput Algorithm for PacBio Long Read Self-Correction.
 		os.makedirs(temp_dir)
 
 	if os.path.exists(temp_dir + '/step1'):
-		print 'ERROR: ' + temp_dir + '/step1' + ' already exist, please delete it before running step 1'
+		print 'ERROR: ' + temp_dir + '/step1' + ' already exists, please delete it before running step 1'
 		exit(-1)
 	else:
 		os.mkdir(temp_dir + '/step1')
@@ -74,7 +74,7 @@ HALS: Fast and High Throughput Algorithm for PacBio Long Read Self-Correction.
 	err = os.system(preread_command)
 
 	if err != 0:
-		print 'ERROR: ' + 'Failed torun preread:' + os.strerror(err)
+		print 'ERROR: ' + 'Failed to run preread:' + os.strerror(err)
 		exit(-1)
 	
 
@@ -85,7 +85,7 @@ HALS: Fast and High Throughput Algorithm for PacBio Long Read Self-Correction.
 	err = os.system(mecat2pw1_command)
 
 	if err != 0:
-		print 'ERROR: ' + 'Failed torun mecat2pw1:' + os.strerror(err)
+		print 'ERROR: ' + 'Failed to run mecat2pw1:' + os.strerror(err)
 		exit(-1)
 ################################
 	rm1_command = 'rm -rf ' + temp_dir + '/step1/' + 'tmpfold '
@@ -94,7 +94,7 @@ HALS: Fast and High Throughput Algorithm for PacBio Long Read Self-Correction.
 	err = os.system(rm1_command)
 
 	if err != 0:
-		print 'ERROR: ' + 'Failed torun rm1:' + os.strerror(err)
+		print 'ERROR: ' + 'Failed to run rm1:' + os.strerror(err)
 		exit(-1)
 
 #####################################
@@ -104,7 +104,7 @@ HALS: Fast and High Throughput Algorithm for PacBio Long Read Self-Correction.
 	err = os.system(bronkerboschadj1_command)
 
 	if err != 0:
-		print 'ERROR: ' + 'Failed torun bronkerboschadj1:' + os.strerror(err)
+		print 'ERROR: ' + 'Failed to run bronkerboschadj1:' + os.strerror(err)
 		exit(-1)
 
 #####################################
@@ -115,7 +115,7 @@ HALS: Fast and High Throughput Algorithm for PacBio Long Read Self-Correction.
 	err = os.system(HALS1_command)
 
 	if err != 0:
-		print 'ERROR: ' + 'Failed torun HALS1:' + os.strerror(err)
+		print 'ERROR: ' + 'Failed to run HALS1:' + os.strerror(err)
 		exit(-1)
 ####################################
 	
@@ -126,7 +126,7 @@ HALS: Fast and High Throughput Algorithm for PacBio Long Read Self-Correction.
 	err = os.system(mecat2pw2_command)
 
 	if err != 0:
-		print 'ERROR: ' + 'Failed torun mecat2pw2:' + os.strerror(err)
+		print 'ERROR: ' + 'Failed to run mecat2pw2:' + os.strerror(err)
 		exit(-1)
 
 ####################################
@@ -136,7 +136,7 @@ HALS: Fast and High Throughput Algorithm for PacBio Long Read Self-Correction.
 	err = os.system(rm2_command)
 
 	if err != 0:
-		print 'ERROR: ' + 'Failed torun rm2:' + os.strerror(err)
+		print 'ERROR: ' + 'Failed to run rm2:' + os.strerror(err)
 		exit(-1)
 
 #################################
@@ -145,7 +145,7 @@ HALS: Fast and High Throughput Algorithm for PacBio Long Read Self-Correction.
 	print 'Running command: ' + addm42MECATm41_command
 	err = os.system(addm42MECATm41_command)
 	if err != 0:
-		print 'ERROR: ' + 'Failed torun addm42MECATm41:' + os.strerror(err)
+		print 'ERROR: ' + 'Failed to run addm42MECATm41:' + os.strerror(err)
 		exit(-1)
 
 ###############################
@@ -154,7 +154,7 @@ HALS: Fast and High Throughput Algorithm for PacBio Long Read Self-Correction.
 	print 'Running command: ' + mecat2cns1_command
 	err = os.system(mecat2cns1_command)
 	if err != 0:
-		print 'ERROR: ' + 'Failed torun mecat2cns1:' + os.strerror(err)
+		print 'ERROR: ' + 'Failed to run mecat2cns1:' + os.strerror(err)
 		exit(-1)
 
 #########################################
@@ -171,7 +171,7 @@ if start_from_step <= 2:
 		os.makedirs(temp_dir)
 
 	if os.path.exists(temp_dir + '/step2'):
-		print 'ERROR: ' + temp_dir + '/step2' + ' already exist, please delete it before running step 2'
+		print 'ERROR: ' + temp_dir + '/step2' + ' already exists, please delete it before running step 2'
 		exit(-1)
 	else:
 		os.mkdir(temp_dir + '/step2')
@@ -181,7 +181,7 @@ if start_from_step <= 2:
 	print 'Running command: ' + separatereads_command
 	err = os.system(separatereads_command)
 	if err != 0:
-		print 'ERROR: ' + 'Failed torun separatereads:' + os.strerror(err)
+		print 'ERROR: ' + 'Failed to run separatereads:' + os.strerror(err)
 		exit(-1)
 #################################
 
@@ -189,7 +189,7 @@ if start_from_step <= 2:
 	print 'Running command: ' + mecat2pw3_command
 	err = os.system(mecat2pw3_command)
 	if err != 0:
-		print 'ERROR: ' + 'Failed torun mecat2pw3:' + os.strerror(err)
+		print 'ERROR: ' + 'Failed to run mecat2pw3:' + os.strerror(err)
 		exit(-1)
 ###########################################
 
@@ -197,7 +197,7 @@ if start_from_step <= 2:
 	print 'Running command: ' + rm3_command
 	err = os.system(rm3_command)
 	if err != 0:
-		print 'ERROR: ' + 'Failed torun rm3:' + os.strerror(err)
+		print 'ERROR: ' + 'Failed to run rm3:' + os.strerror(err)
 		exit(-1)
 
 ###########################################
@@ -206,7 +206,7 @@ if start_from_step <= 2:
 	print 'Running command: ' + cat1_command
 	err = os.system(cat1_command)
 	if err != 0:
-		print 'ERROR: ' + 'Failed torun cat1:' + os.strerror(err)
+		print 'ERROR: ' + 'Failed to run cat1:' + os.strerror(err)
 		exit(-1)
 #############################################
 
@@ -214,14 +214,14 @@ if start_from_step <= 2:
 	print 'Running command: ' + mecat2pw4_command
 	err = os.system(mecat2pw4_command)
 	if err != 0:
-		print 'ERROR: ' + 'Failed torun mecat2pw4:' + os.strerror(err)
+		print 'ERROR: ' + 'Failed to run mecat2pw4:' + os.strerror(err)
 		exit(-1)
 
 	rm4_command = 'rm -rf ' + temp_dir + '/step2/' + 'tmpfold '
 	print 'Running command: ' + rm4_command
 	err = os.system(rm4_command)
 	if err != 0:
-		print 'ERROR: ' + 'Failed torun rm4:' + os.strerror(err)
+		print 'ERROR: ' + 'Failed to run rm4:' + os.strerror(err)
 		exit(-1)
 
 ########################################
@@ -229,7 +229,7 @@ if start_from_step <= 2:
 	print 'Running command: ' + bronkerboschadj2_command
 	err = os.system(bronkerboschadj2_command)
 	if err != 0:
-		print 'ERROR: ' + 'Failed torun bronkerboschadj2:' + os.strerror(err)
+		print 'ERROR: ' + 'Failed to run bronkerboschadj2:' + os.strerror(err)
 		exit(-1)
 ############################################
 	
@@ -249,21 +249,21 @@ if start_from_step <= 2:
 	print 'Running command: ' + HALS2_command
 	err = os.system(HALS2_command)
 	if err != 0:
-		print 'ERROR: ' + 'Failed torun HALS2:' + os.strerror(err)
+		print 'ERROR: ' + 'Failed to run HALS2:' + os.strerror(err)
 		exit(-1)
 #########################################
 	modifym4file2_command = 'modifym4file2 ' + temp_dir + '/step2/' + 'cor_incor.fasta.m4 '+ temp_dir + '/step2/' + 'deletepairs3.txt '+ temp_dir + '/step2/' +'corrected2.m4 '
 	print 'Running command: ' + modifym4file2_command
 	err = os.system(modifym4file2_command)
 	if err != 0:
-		print 'ERROR: ' + 'Failed torun modifym4file2:' + os.strerror(err)
+		print 'ERROR: ' + 'Failed to run modifym4file2:' + os.strerror(err)
 		exit(-1)
 ######################################
 	mecat2cns2_command = 'mecat2cns -x 0 -i 1 -t 16 -l 10 -c 3 ' + temp_dir + '/step2/' + 'corrected2.m4 ' + temp_dir + '/step2/' + 'cor_incor.fasta ' + temp_dir + '/step2/' + 'allreads0_corrected_filted2.fasta '
 	print 'Running command: ' + mecat2cns2_command
 	err = os.system(mecat2cns2_command)
 	if err != 0:
-		print 'ERROR: ' + 'Failed torun mecat2cns2:' + os.strerror(err)
+		print 'ERROR: ' + 'Failed to run mecat2cns2:' + os.strerror(err)
 		exit(-1)
 
 ##########################################
@@ -273,7 +273,7 @@ if start_from_step <= 2:
 	err = os.system(filter_command)
 
 	if err != 0:
-		print 'ERROR: ' + 'Failed torun mecat2cns2:' + os.strerror(err)
+		print 'ERROR: ' + 'Failed to run mecat2cns2:' + os.strerror(err)
 		exit(-1)
 
 
@@ -285,7 +285,7 @@ if start_from_step <= 2:
 	err = os.system(cat2_command)
 
 	if err != 0:
-		print 'ERROR: ' + 'Failed torun cat2:' + os.strerror(err)
+		print 'ERROR: ' + 'Failed to run cat2:' + os.strerror(err)
 		exit(-1)
 
 
@@ -297,7 +297,7 @@ if start_from_step <= 2:
 	err = os.system(write_corrected2_command)
 
 	if err != 0:
-		print 'ERROR: ' + 'Failed torun write_corrected2:' + os.strerror(err)
+		print 'ERROR: ' + 'Failed to run write_corrected2:' + os.strerror(err)
 		exit(-1)
 
 ##############################################
@@ -306,7 +306,7 @@ if start_from_step <= 2:
 	print 'Running command: ' + cat3_command
 	err = os.system(cat3_command)
 	if err != 0:
-		print 'ERROR: ' + 'Failed torun cat3:' + os.strerror(err)
+		print 'ERROR: ' + 'Failed to run cat3:' + os.strerror(err)
 		exit(-1)
 
 
@@ -317,7 +317,7 @@ if start_from_step <= 2:
 	err = os.system(full_trim_command)
 
 	if err != 0:
-		print 'ERROR: ' + 'Failed torun full_trim:' + os.strerror(err)
+		print 'ERROR: ' + 'Failed to run full_trim:' + os.strerror(err)
 		exit(-1)
 	print '''
 ###############################################
