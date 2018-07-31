@@ -1,5 +1,4 @@
 #include"HALS.h"
-#include"HALS.h"
 #include"combinecliques2.h"
 string cliquefile;
 string edgefile;
@@ -19,6 +18,7 @@ string realireads;
 string alignment;
 string delete_edges_file;
 string delete_edges_file2;
+
 double f1=0.5;
 double f2=0.5;
 double d1=0.05;
@@ -30,6 +30,7 @@ int workflow=0;
 int once_num=0;
 int parseargs(int argc, char * argv[])
 {
+	cout<<"begin parse"<<endl;
 	if(argc<2)
 	{
 		cout<<"Invalid parameters!"<<endl;
@@ -99,15 +100,6 @@ int parseargs(int argc, char * argv[])
 
 
 
-
-				if(argv[i][1]=='t')
-				{
-					printmatrix=argv[++i];
-					continue;
-				}
-
-
-
 				if(argv[i][1]=='p'&&argv[i][2]=='c')
 				{
 					printcliques=argv[++i];
@@ -116,6 +108,11 @@ int parseargs(int argc, char * argv[])
 				if(argv[i][1]=='p'&&argv[i][2]=='r')
 				{
 					printreads=argv[++i];
+					continue;
+				}
+				if(argv[i][1]=='p'&&argv[i][2]=='m')
+				{
+					printmatrix=argv[++i];
 					continue;
 				}
 				if(argv[i][1]=='f'&&argv[i][2]=='1')
@@ -143,13 +140,14 @@ int parseargs(int argc, char * argv[])
 	}
 }
 
-
 int main(int argc,char * argv[])
 {
-	//cout<<"begin"<<endl;
+	cout<<"begin"<<endl;
+	cout<<"###########"<<endl;
 	parseargs(argc,argv);
-	//cout<<"finish parseargs"<<endl;
+	
+	cout<<"finish parseargs"<<endl;
 	combine();
-	//cout<<"finish combine"<<endl;
+	cout<<"finish combine"<<endl;
 	return 0;
 }

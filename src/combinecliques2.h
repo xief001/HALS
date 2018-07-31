@@ -1,9 +1,6 @@
 #ifndef _COMBINECLIQUES2_
 #define _COMBINECLIQUES2_
 
-#include"HALS.h"
-
-#include"combinecliques2.h"
 #include <vector>
 #include <algorithm>
 #include<iostream>
@@ -37,7 +34,7 @@ typedef struct read_node//read ½ÚµãµÄ½á¹¹£ºÊı¾İ²¿·Ö´æ´¢readÃû³Æ£¬Ö¸Õë²¿·ÖÖ¸ÏòÏÂÒ
 	struct read_node *next;
 }read_node;
 
-typedef struct clique_node//clique ½ÚµãµÄ½á¹¹£ºÊı¾İ²¿·Ö´æ´¢cliqueÃû³Æ£¬Ö¸Õë²¿·ÖÖ¸ÏòÏÂÒ»¸öclique
+typedef struct clique_node
 {
 	string clique;
 	int clique_ID;
@@ -47,13 +44,32 @@ typedef struct clique_node//clique ½ÚµãµÄ½á¹¹£ºÊı¾İ²¿·Ö´æ´¢cliqueÃû³Æ£¬Ö¸Õë²¿·ÖÖ
 	struct clique_node *next;
 }clique_node;
 
-typedef struct clique_list//clique ±íµÄ½á¹¹£ºÊı¾İ²¿·Ö´æ´¢cliqueÃû³Æ£¬Ö¸Õë²¿·ÖÖ¸ÏòreadÃû³Æ
+typedef struct clique_list
 {
 	string clique_name;
 	int clique_ID;
 	int read_num;
 	struct read_node *next;
 }clique_list;
+
+typedef struct matrix_node
+{
+	string clique_name;
+	int clique_ID;
+	int read_num;
+	struct read_node *next_read_node;
+	struct matrix_node *next_matrix_node;
+
+}matrix_node;
+
+typedef struct matrix_list
+{
+	string clique_name;
+	int clique_ID;
+	int clique_num;
+	struct matrix_node *next;
+}matrix_list;
+
 typedef struct region_node
 {
 	int count_clique1;
@@ -83,7 +99,7 @@ typedef struct deletepair_node
 	string readname2;
 }deletepair_node;
 
-typedef struct read_list//read ±íµÄ½á¹¹£ºÊı¾İ²¿·Ö´æ´¢readÃû³Æ£¬Ö¸Õë²¿·ÖÖ¸ÏòcliqueÃû³Æ
+typedef struct read_list
 {
 	string read_name;
 	int read_ID;
@@ -116,7 +132,7 @@ typedef struct combine_read_node
 extern int count_clique,count_cliques,count_read,count_reads;
 
 
-extern void combine();
+void combine();
 
 
 #endif

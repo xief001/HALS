@@ -7,33 +7,14 @@
 
 using namespace std;
 char ch;
-double flag_singal=0,flag_read=0,flag_num=1,flag_invalid=0,flag_sup=0,flag_rev=0,invalid_read_num=0,valid_read_num=0;
-//int genome1[813184]={0},genome2[316620]={0},genome3[1531933]={0},genome4[439888]={0},genome0[230218]={0},genome5[85779]={0};
-//int genome6[576874]={0},genome7[270161]={0},genome8[1090940]={0},genome9[562643]={0},genome10[745751]={0},genome11[666816]={0};
 
-//int genome12[1078177]={0},genome13[924431]={0},genome14[784333]={0},genome15[1091291]={0},genome16[948066]={0};
-int genome[200000000]={0};
-string pos_str;
-int POS=0,read_len1=0,read_len2=0,read_num=0;
-string SN,LN,ID,PN,VN,CL,gi,num;
-double num_M=0,num_I=0,num_D=0,num_S=0,num_H=0,num_X=0,num_equal=0,base_count=0,alignbase=0,aligncount=0;
-double reserve=0;
-double alignment=0;
-double similarity=0;
-double coverage=0;
-int i=0;
-int length[1000000]={0};
-void f5();
-int read[100000]={0};
-FILE *f_fp;
+FILE *f_corrected;
+FILE *f_all;
+FILE *f_incorrected;
+
 string method="";
-void rev_1();
-int flaglen=0;
-double genomelen=0;
-int flag_tab=0;
-vector<string> genomenamevec;
-vector<string> genomelenvec;
-int readslist[2000000]={0};
+
+int readslist[200000000]={0};
 
 int read_genome_num=0;
 ofstream fout;
@@ -88,8 +69,6 @@ void cigar(FILE* file)
 		
 		ch=fgetc(file);
 	}
-	fclose(f_fp);
-
 }
 
 
@@ -112,11 +91,22 @@ void f2(FILE *f_fp)
 			if(readslist[read_index]==0)
 			{
 				fout<<">"<<read_index<<endl;
+				int iii = 0;
 				while(!feof(f_fp))
 				{
 					ch=fgetc(f_fp);
-					fout<<ch;
-					if(ch=='\n')
+					if(ch!=-1)
+					{
+						fout<<ch;
+					}
+					
+					
+					iii++;
+					if(read_index == 9999 &&iii == 5240)
+					{
+						breakpoint();
+					}
+					if(ch=='\n'||ch==-1)
 					{
 						break;
 					}
@@ -141,8 +131,6 @@ void f2(FILE *f_fp)
 		
 		ch=fgetc(f_fp);
 	}
-	fclose(f_fp);
-
 }
 
 
@@ -154,24 +142,24 @@ int main(int argc,char * argv[])
 	filename=argv[1];
 	const char* filename2;
 	filename2=filename.c_str();
-	f_fp=fopen(filename2,"r");
-	cigar(f_fp);
-
+	f_corrected=fopen(filename2,"r");
+	cigar(f_corrected);
+	fclose(f_corrected);
 
 
 	filename=argv[2];
 	const char* filename1;
 	filename1=filename.c_str();
-	f_fp=fopen(filename1,"r");
+	f_all=fopen(filename1,"r");
 
 	
-	string filename4="0";
-	filename4=argv[3];
+	filename=argv[3];
 	const char* filename5;
-	filename5=filename4.c_str();
+	filename5=filename.c_str();
 	fout.open(filename5,ios::trunc);
-	f2(f_fp);
-	
+
+	f2(f_all);
+	fclose(f_all);
 	
 	return 0;
 }

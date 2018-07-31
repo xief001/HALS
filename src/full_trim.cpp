@@ -171,18 +171,16 @@ void replaceread()
 {
 	for(int i=0 ;i<corrected.size();i++)
 	{
-		cout<<"replacing \t"<<i<<" \tcorrected read"<<endl;
-		if(i==35133)
-		{
-			breakpoint();
-		}
 		int readid;
 		readid=corrected[i].ori_read_ID;
-		const char* str;
-		str=corrected[i].sequence.c_str();
-		if(corrected[i].ori_start_pos<allreads[readid].size()&&corrected[i].ori_start_pos<allreads[readid].size())
+		if(readid<allreads.size())
 		{
-			allreads[readid]=allreads[readid].replace(allreads[readid].begin()+corrected[i].ori_start_pos,allreads[readid].begin()+corrected[i].ori_end_pos,str);
+			const char* str;
+			str=corrected[i].sequence.c_str();
+			if(corrected[i].ori_start_pos<allreads[readid].size()&&corrected[i].ori_start_pos<allreads[readid].size())
+			{
+				allreads[readid]=allreads[readid].replace(allreads[readid].begin()+corrected[i].ori_start_pos,allreads[readid].begin()+corrected[i].ori_end_pos,str);
+			}
 		}
 	}
 }
@@ -238,7 +236,7 @@ int main(int argc,char * argv[])
 	filename1=corrected.c_str();
 	f_corrected=fopen(filename1,"r");
 	readcorrected(f_corrected);
-	cout<<"	readcorrected(f_corrected);"<<endl;
+	//cout<<"	readcorrected(f_corrected);"<<endl;
 
 	//argv[2] allreads.fasta
 	string allreads="0";
@@ -247,7 +245,7 @@ int main(int argc,char * argv[])
 	filename2=allreads.c_str();
 	f_allreads=fopen(filename2,"r");
 	readallreads(f_allreads);
-	cout<<"	readallreads(f_allreads);"<<endl;
+	//cout<<"	readallreads(f_allreads);"<<endl;
 
 	//argv[3] fullreads.fasta
 	string fullreads="0";
@@ -265,13 +263,14 @@ int main(int argc,char * argv[])
 	fout_trim.open(filename4,ios::trunc);
 	
 	replaceread();
-	cout<<"replaceread()"<<endl;
+	//cout<<"replaceread()"<<endl;
 
 	writefullreads();
-	cout<<"writefullreads()"<<endl;
+	//cout<<"writefullreads()"<<endl;
 
 	writetrimreads();
-	cout<<"writetrimreads()"<<endl;
+	//cout<<"writetrimreads()"<<endl;
+//./output/split_reads.fasta ./temp/step1/allreads.fasta ./output/full_reads.fasta ./output/trimmed_reads.fasta
 
 	return 0;
 }

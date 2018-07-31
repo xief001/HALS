@@ -1,6 +1,11 @@
 #include"HALS.h"
 #include"combinecliques2.h"
 #include<vector>
+#include<fstream>
+#include<iostream>
+#include<algorithm>
+#include<string>
+#include<sstream>
 extern string cliquefile;
 extern string edgefile;
 extern string printreads;
@@ -9,21 +14,29 @@ extern string readfile;
 extern string printmatrix;
 extern string m4file ;
 extern string printm4info;
-
 FILE* f_clique;
 FILE* f_edge;
 FILE* f_read;
 FILE* f_m4;
 int C0=0;
-clique_matrix clique_matrix1[num_clique][num_clique];
-clique_list cliquelist[num_read];
-clique_list cliqueslist[num_read];
+//clique_matrix clique_matrix1[num_clique][num_clique];
+//vector < vector <clique_matrix> > clique_matrix1;
+vector <matrix_list> clique_matrix1;
+//int cliquelimit = 0;
+//clique_list cliquelist[num_read];
+//clique_list cliqueslist[num_read];
 
-read_list readlist[num_read];
-read_list readslist[num_read];
-read_list readslist2[num_read];
+//read_list readlist[num_read];
+//read_list readslist[num_read];
+//read_list readslist2[num_read];
 
-combine_read_node* combine_list[num_read]={NULL};
+//combine_read_node* combine_list[num_read]={NULL};
+
+int num_read, num_clique;
+
+//clique_matrix **clique_matrix1 = NULL;
+clique_list *cliquelist = NULL, *cliqueslist = NULL;
+read_list *readlist = NULL, *readslist = NULL, *readslist2=NULL;
 
 vector <m4info> m4infolist;
 vector <m4info> m4infolist2;
@@ -35,7 +48,7 @@ int count_clique=0,count_cliques=0,count_read=0,count_reads=0;
 
 void init_cliquelist()
 {
-	for(int i=0;i<num_read;i++)
+	for(int i=0;i<num_clique;i++)
 	{
 		cliquelist[i].clique_name="";
 		cliquelist[i].clique_ID=0;
@@ -45,7 +58,7 @@ void init_cliquelist()
 
 void init_cliqueslist()
 {
-	for(int i=0;i<num_read;i++)
+	for(int i=0;i<num_clique;i++)
 	{
 		cliqueslist[i].clique_name="";
 		cliqueslist[i].clique_ID=0;
@@ -83,9 +96,10 @@ void init_readslist()
 		readslist2[i].next=NULL;
 	}
 }
-
+/*
 void init_matrix()
 {
+
 	for(int i=0;i<num_clique;i++)
 	{
 		for(int j =0;j<num_clique;j++)
@@ -99,16 +113,17 @@ void init_matrix()
 		}
 	}
 }
-
+*/
 void create_clique_matrix()
 {
 	for(int i=0;i<count_cliques;i++)
 	{
-		for(int j =0;j<count_cliques;j++)
-		{
-			clique_matrix1[i][j].clique_name1=cliqueslist[i].clique_name.c_str();
-			clique_matrix1[i][j].clique_name2=cliqueslist[j].clique_name.c_str();
-		}
+		matrix_list newmatrix;
+		newmatrix.clique_name=cliqueslist[i].clique_name.c_str();
+		newmatrix.clique_ID= i;
+		newmatrix.clique_num= 0;
+		newmatrix.next = NULL;
+		clique_matrix1.push_back(newmatrix);
 	}
 }
 
@@ -138,6 +153,7 @@ void readcliquefile()
 			cliquelist[count_clique].clique_name="clique"+str;
 
 			count_clique++;
+			
 			str.clear();
 			readname.clear();
 		}
@@ -530,7 +546,7 @@ void insert_edge(string read1,string read2)
 {
 
 
-	int readnum1=0;//read1 的位置
+	int readnum1=0;//read1 
 	for(readnum1=0;readnum1<count_reads;readnum1++)
 	{
 		if(readslist[readnum1].read_name.compare(read1)==0)
@@ -548,7 +564,7 @@ void insert_edge(string read1,string read2)
 		readslist[count_reads].region_flag=0;
 		count_reads++;
 	}
-	int readnum2=0;//read2 的位置
+	int readnum2=0;//read2 
 	for(readnum2=0;readnum2<count_reads;readnum2++)
 	{
 		if(readslist[readnum2].read_name.compare(read2)==0)
@@ -755,7 +771,7 @@ void insertflag_readslist()
 		}
 		if(count>=2)
 		{
-			readslist[i].flag=1;
+			readslist[i].flag=count;
 			count_flag++;
 		}
 
@@ -991,7 +1007,7 @@ void init()
 	init_cliquelist();
 	init_cliqueslist();
 	init_readlist();
-	init_matrix();
+	//init_matrix();
 
 }
 
@@ -1072,10 +1088,11 @@ void printm4infoslist2()
 
 void insert_clique_matrix()
 {
+	cout<<"count_reads = "<<count_reads<<endl;
 	for(int i=0;i<count_reads;i++)
 	{
-
-		if(readslist[i].flag==0)
+		//cout<<"insert_clique_matrix i = "<<i<<"\tin\t"<<count_reads<<",\t cliquenum = "<<readslist[i].flag<<endl;
+		if(readslist[i].flag==0||readslist[i].flag>100)
 		{
 			continue;
 		}
@@ -1084,6 +1101,7 @@ void insert_clique_matrix()
 		c1=readslist[i].next;
 		while(c1->next!=NULL)
 		{
+			
 			c2=c1->next;
 			while(c2!=NULL)
 			{
@@ -1096,24 +1114,40 @@ void insert_clique_matrix()
 				read1->region_flag=0;
 				read1->d=0;
 				read1->next=NULL;
-
-				r1=clique_matrix1[c1->clique_ID][c2->clique_ID].next;
-				if(r1==NULL)
+				int id=0;
+				int flag_clique = 0 ;
+				matrix_node *m;
+				m = clique_matrix1[c1->clique_ID].next;
+				while(m!= NULL)
 				{
-					clique_matrix1[c1->clique_ID][c2->clique_ID].next=read1;
+					if(m->clique_ID == c2-> clique_ID)
+					{
+						flag_clique= 1 ;
+						break;
+					}
+					m = m->next_matrix_node;
+				}
+				if(flag_clique==1)
+				{
+					read1->next= m->next_read_node;
+					m->next_read_node = read1;
+					m->read_num++;
+					flag_clique = 0;
 				}
 				else
 				{
-					while(r1->next!=NULL)
-					{
-						r1=r1->next;
-					}
-					r1->next=read1;
+					matrix_node *newmatrix_node = new(matrix_node);
+					
+					newmatrix_node->clique_name = c2->clique.c_str();
+					newmatrix_node->clique_ID = c2->clique_ID;
+					newmatrix_node->read_num = 1;
+					newmatrix_node->next_read_node = read1;
+					clique_matrix1[c1->clique_ID].clique_num++;
+					newmatrix_node->next_matrix_node = clique_matrix1[c1->clique_ID].next;
+					clique_matrix1[c1->clique_ID].next = newmatrix_node;
 
 				}
-
-
-				clique_matrix1[c1->clique_ID][c2->clique_ID].num_reads++;
+				
 
 				read_node *read2=new(read_node);
 				read2->read=readslist[i].read_name.c_str();
@@ -1122,26 +1156,40 @@ void insert_clique_matrix()
 				read2->read_ID=readslist[i].read_ID;
 				read2->d=0;
 				read2->next=NULL;
-
-				r2=clique_matrix1[c2->clique_ID][c1->clique_ID].next;
-
-				if(r2==NULL)
+				m = clique_matrix1[c2->clique_ID].next;
+				while(m!= NULL)
 				{
-					clique_matrix1[c2->clique_ID][c1->clique_ID].next=read2;
+					if(m->clique_ID == c1-> clique_ID)
+					{
+						flag_clique= 1 ;
+						break;
+					}
+					m = m->next_matrix_node;
+				}
+				
+				if(flag_clique==1)
+				{
+					read2->next= m->next_read_node;
+					m->next_read_node = read2;
+					m->read_num++;
+					flag_clique = 0;
 				}
 				else
 				{
-					while(r2->next!=NULL)
-					{
-						r2=r2->next;
-					}
-					r2->next=read2;
+					matrix_node *newmatrix_node = new(matrix_node);
+					
+					newmatrix_node->clique_name = c1->clique.c_str();
+					newmatrix_node->clique_ID = c1->clique_ID;
+					newmatrix_node->read_num = 1;
+					newmatrix_node->next_read_node = read2;
+					clique_matrix1[c2->clique_ID].clique_num++;
 
+					newmatrix_node->next_matrix_node = clique_matrix1[c2->clique_ID].next;
+					clique_matrix1[c2->clique_ID].next = newmatrix_node;
 				}
-
-				clique_matrix1[c2->clique_ID][c1->clique_ID].num_reads++;
 				c2=c2->next;
 			}
+			
 			c1=c1->next;
 		}
 	}
@@ -1179,7 +1227,26 @@ void combine_cliques()
 			{
 				min=(double)cliqueslist[j].read_num;
 			}
-			if(clique_matrix1[i][j].num_reads>=f1*min)
+			int flag_clique = 0;
+			matrix_node *mij;
+			mij = clique_matrix1[i].next;
+			int clique_matrix1ijnum_reads = 0;
+			while(mij!= NULL)
+			{
+				if(mij->clique_ID == j)
+				{
+					flag_clique= 1 ;
+					clique_matrix1ijnum_reads = mij->read_num;
+					break;
+				}
+				mij = mij->next_matrix_node;
+			}
+			if(flag_clique==0)
+			{
+				continue;
+			}
+
+			if(clique_matrix1ijnum_reads>=f1*min)
 			{
 				read_node * r1,*r2,*r3;
 				
@@ -1195,7 +1262,7 @@ void combine_cliques()
 					readslist[r2->read_ID].flag_realign=1;
 					r2=r2->next;
 				}
-				r3=clique_matrix1[i][j].next;
+				r3=mij->next_read_node;
 				while(r3!=NULL)
 				{
 					readslist[r3->read_ID].flag_realign=1;
@@ -1283,7 +1350,7 @@ void combine_cliques()
 			else
 			{
 				read_node * r_count;
-				r_count=clique_matrix1[i][j].next;
+				r_count=mij->next_read_node;
 				int count_s=0;
 				while(r_count!=NULL)
 				{
@@ -1294,10 +1361,10 @@ void combine_cliques()
 					r_count=r_count->next;
 				}
 
-				if(count_s>=f2*(double)(clique_matrix1[i][j].num_reads))
+				if(count_s>=f2*(double)(clique_matrix1ijnum_reads))
 				{
 					read_node * r;
-					r=clique_matrix1[i][j].next;
+					r=mij->next_read_node;
 					while (r!=NULL)
 					{
 						if(r->length>=L)
@@ -1344,7 +1411,7 @@ void combine_cliques()
 								else if(m->info.readname2.compare(readslist[r->read_ID].read_name.c_str())==0)
 								{
 									read_node *ra1;
-									ra1=cliqueslist[clique_matrix1[i][j].clique_ID1].next;
+									ra1=cliqueslist[i].next;
 									while(ra1!=NULL)
 									{
 										if(m->info.readname1.compare(ra1->read.c_str())==0)
@@ -1358,7 +1425,7 @@ void combine_cliques()
 										ra1=ra1->next;
 									}
 									read_node *ra2;
-									ra2=cliqueslist[clique_matrix1[i][j].clique_ID2].next;
+									ra2=cliqueslist[j].next;
 									while(ra2!=NULL)
 									{
 										if(m->info.readname1.compare(ra2->read.c_str())==0)
@@ -1403,7 +1470,7 @@ void combine_cliques()
 						
 						r=r->next;
 					}
-					r=clique_matrix1[i][j].next;
+					r=mij->next_read_node;
 					while (r!=NULL)
 					{
 						if(readslist[r->read_ID].region_flag==1)//cover 2 regions, delete longreads r's alignment
@@ -1415,7 +1482,7 @@ void combine_cliques()
 							c=readslist[r->read_ID].next;
 							while(c!=NULL)
 							{
-								if(c->clique_ID==clique_matrix1[i][j].clique_ID1)
+								if(c->clique_ID==i)
 								{
 									if(c->flag==1)
 									{
@@ -1426,7 +1493,7 @@ void combine_cliques()
 										d1=c->d;
 									}
 								}
-								if(c->clique_ID==clique_matrix1[i][j].clique_ID2)
+								if(c->clique_ID==j)
 								{
 									if(c->flag==1)
 									{
@@ -1445,7 +1512,7 @@ void combine_cliques()
 								if(d1<d2)
 								{
 									read_node *r1;
-									r1=cliqueslist[clique_matrix1[i][j].clique_ID1].next;
+									r1=cliqueslist[i].next;
 									while(r1!=NULL)
 									{
 										foutdelete<<r->read.c_str()<<" "<<r1->read.c_str()<<endl;
@@ -1455,7 +1522,7 @@ void combine_cliques()
 								else if(d1>d2)
 								{
 									read_node *r2;
-									r2=cliqueslist[clique_matrix1[i][j].clique_ID2].next;
+									r2=cliqueslist[j].next;
 									while(r2!=NULL)
 									{
 										foutdelete<<r->read.c_str()<<" "<<r2->read.c_str()<<endl;
@@ -1467,7 +1534,7 @@ void combine_cliques()
 							{
 								flag2=0;
 								read_node *r1;
-								r1=cliqueslist[clique_matrix1[i][j].clique_ID1].next;
+								r1=cliqueslist[i].next;
 								while(r1!=NULL)
 								{
 									foutdelete<<r->read.c_str()<<" "<<r1->read.c_str()<<endl;
@@ -1478,7 +1545,7 @@ void combine_cliques()
 							{
 								flag1=0;
 								read_node *r2;
-								r2=cliqueslist[clique_matrix1[i][j].clique_ID2].next;
+								r2=cliqueslist[j].next;
 								while(r2!=NULL)
 								{
 									foutdelete<<r->read.c_str()<<" "<<r2->read.c_str()<<endl;
@@ -1507,7 +1574,7 @@ void combine_cliques()
 								readslist[r2->read_ID].flag_realign=1;
 								r2=r2->next;
 							}
-							r3=clique_matrix1[i][j].next;
+							r3=mij->next_read_node;
 							while(r3!=NULL)
 							{
 								readslist[r3->read_ID].flag_realign=1;
@@ -1520,7 +1587,7 @@ void combine_cliques()
 				else
 				{
 					read_node * r;
-					r=clique_matrix1[i][j].next;
+					r=mij->next_read_node;
 					while (r!=NULL)
 					{
 						if(readslist[r->read_ID].region_flag==1)//cover 2 regions, delete longreads r's alignment
@@ -1531,7 +1598,7 @@ void combine_cliques()
 							c=readslist[r->read_ID].next;
 							while(c!=NULL)
 							{
-								if(c->clique_ID==clique_matrix1[i][j].clique_ID1)
+								if(c->clique_ID==i)
 								{
 									if(c->flag==1)
 									{
@@ -1542,7 +1609,7 @@ void combine_cliques()
 										d1=c->d;
 									}
 								}
-								if(c->clique_ID==clique_matrix1[i][j].clique_ID2)
+								if(c->clique_ID==j)
 								{
 									if(c->flag==1)
 									{
@@ -1561,7 +1628,7 @@ void combine_cliques()
 								if(d1<d2)
 								{
 									read_node *r1;
-									r1=cliqueslist[clique_matrix1[i][j].clique_ID1].next;
+									r1=cliqueslist[i].next;
 									while(r1!=NULL)
 									{
 										foutdelete<<r->read.c_str()<<" "<<r1->read.c_str()<<endl;
@@ -1571,7 +1638,7 @@ void combine_cliques()
 								else if(d1>d2)
 								{
 									read_node *r2;
-									r2=cliqueslist[clique_matrix1[i][j].clique_ID2].next;
+									r2=cliqueslist[j].next;
 									while(r2!=NULL)
 									{
 										foutdelete<<r->read.c_str()<<" "<<r2->read.c_str()<<endl;
@@ -1583,7 +1650,7 @@ void combine_cliques()
 							{
 								flag2=0;
 								read_node *r1;
-								r1=cliqueslist[clique_matrix1[i][j].clique_ID1].next;
+								r1=cliqueslist[i].next;
 								while(r1!=NULL)
 								{
 									foutdelete<<r->read.c_str()<<" "<<r1->read.c_str()<<endl;
@@ -1594,7 +1661,7 @@ void combine_cliques()
 							{
 								flag1=0;
 								read_node *r2;
-								r2=cliqueslist[clique_matrix1[i][j].clique_ID2].next;
+								r2=cliqueslist[j].next;
 								while(r2!=NULL)
 								{
 									foutdelete<<r->read.c_str()<<" "<<r2->read.c_str()<<endl;
@@ -1662,7 +1729,6 @@ void create_readslist2()
 				}
 				readslist2[count_reads2].flag=0;
 				readslist2[count_reads2].info=NULL;
-				
 				readslist2[count_reads2].next=NULL;
 				readslist2[count_reads2].read_ID=count_reads2;
 				readslist2[count_reads2].read_name=readname.c_str();
@@ -1693,6 +1759,7 @@ void create_readslist2()
 
 		}
 		ch= fgetc(f_read);
+
 	}
 	fclose(f_read);
 }
@@ -1701,11 +1768,7 @@ void create_region2()
 {
 	for(int i=0 ;i<count_reads2;i++)
 	{
-		if(i%100==0)
-		{
-			//cout<<i<<endl;
-		}
-		vector<int> a(readslist2[i].length/100+1);
+		vector<int> a(readslist2[i].length/1000+1);
 		readslist2[i].region2=a;
 	}
 }
@@ -1931,7 +1994,7 @@ void insertflag_readslist2()
 		}
 		if(count>=2)
 		{
-			readslist2[i].flag=1;
+			readslist2[i].flag++;
 			count_flag++;
 		}
 	}
@@ -2085,7 +2148,6 @@ void printreadslist2()
 }
 void HASAL2()
 {
-	//cout<<"process HASAL2"<<endl;
 	ofstream foutdelete;  
 
 	const char * outdeletefile;
@@ -2099,10 +2161,12 @@ void HASAL2()
 	{
 		Csum+=cliqueslist[i].read_num;
 	}
+	cout<<"cout_cliques "<<count_cliques<<endl;
 	C0=Csum/count_cliques;
 	for(int i=once_num;i<count_reads2;i++)
 	{
-		if(readslist2[i].flag!=0)
+		cout<<"i =  "<<i<<"\tin\t"<<count_reads2<<endl;
+		if(readslist2[i].flag!=0&&readslist2[i].flag<50)
 		{
 			//cout<<"count_reads2 = "<<count_reads2<<"\tread "<<readslist2[i].read_ID<<endl;
 			double PA,PB;
@@ -2110,7 +2174,7 @@ void HASAL2()
 			s=readslist2[i].next;
 			e=s->next;
 			while(e!=NULL)
-			{		
+			{
 				if((s->identity-e->identity)>=d1)
 				{
 					PA=1;
@@ -2170,11 +2234,17 @@ void HASAL2()
 			m=readslist2[i].info;
 			while(m!=NULL)
 			{
+				if(cliqueslist[s->clique_ID].read_num>50)
+				{
+					m=m->next;
+					continue;
+				}
 				read_node * r;
 				r=cliqueslist[s->clique_ID].next;
+
 				while(r!=NULL)
 				{
-					if(m->info.readname1.compare(r->read.c_str())==0)
+					if(m->info.readname1.compare(r->read.c_str())==0&&readslist2[r->read_ID].flag>=100)
 					{
 
 					}
@@ -2184,11 +2254,11 @@ void HASAL2()
 
 						int st=0;
 						int en=0;
-						st=m->info.start2/100+1;
-						en=m->info.end2/100+1;
+						st=m->info.start2/1000+1;
+						en=m->info.end2/1000+1;
 						for(int j=st;j<en;j++)
 						{
-							if(readslist2[i].region2[j]<50)
+							if(readslist2[i].region2[j]<20)
 							{
 								readslist2[i].region2[j]++;
 								flag=1;
@@ -2200,6 +2270,7 @@ void HASAL2()
 							deletepair_node d;
 							d.readname1=m->info.readname1.c_str();
 							d.readname2=m->info.readname2.c_str();
+							/*
 							for(int k=0;k<count_delete;k++)
 							{
 								if(deletepairlist[k].readname1.compare(m->info.readname1.c_str())==0&&deletepairlist[k].readname2.compare(m->info.readname2.c_str())==0)
@@ -2207,10 +2278,11 @@ void HASAL2()
 									flag_writen=1;
 								}
 							}
-							if(flag_writen!=1)
+							*/
+							//if(flag_writen!=1)
 							{
-								count_delete++;
-								deletepairlist.push_back(d);
+								//count_delete++;
+								//deletepairlist.push_back(d);
 								foutdelete<<m->info.readname1.c_str()<<" "<<m->info.readname2.c_str()<<endl;
 							}
 						}
@@ -2226,23 +2298,14 @@ void HASAL2()
 	//cout<<"process HASAL2 end"<<endl;
 }
 
+
 void write_combinedreads()
 {
-	const char* filename3;
-	filename3=realireads.c_str();
-	ofstream fout;
-	fout.open(filename3,ios::trunc);
-	breakpoint();
-	  
-	//fout.open("./realireads.fasta",ios::out);  
-	const char * filename6;
-	filename6=readfile.c_str();
-	f_read=fopen(filename6,"r");
-	char ch;
-	ch= fgetc(f_read);
+	std::ofstream fout(realireads.c_str(),std::ios::out);
+	std::ifstream fin(readfile.c_str(), std::ios::in);   
 	string readname="";
-	string sreadname="";
-	string sread="";
+	//string sreadname="";
+	string read="";
 	int flag=0;
 	int count=0;
 	int count_writen=0;
@@ -2250,76 +2313,40 @@ void write_combinedreads()
 	int flag_writen=0;
 	int count_realireads=0;
 	int readID=0;
-	while(!feof(f_read))
+	while(getline(fin,readname))
 	{
-		if(ch==-1)
+		if(readname[0]=='>')
 		{
-			break;
+			readname.erase(0,1);
 		}
-		if(ch=='\n')
+		getline(fin,read);
+		for(int i=0;i<count_reads;i++)
 		{
-			for(int i=0;i<count_reads;i++)
+			if(readslist[i].read_name.compare(readname.c_str())==0)
 			{
-				if(readslist[i].read_name.compare(readname.c_str())==0)
-				{
-					flag_find=1;
-					readID=i;
-					break;
-				}
-				
+				flag_find=1;
+				readID=i;
+				break;
 			}
-			if(flag_find==1)
+		}
+		if(flag_find==1)
+		{
+			flag_find=0;
+			if(readslist[readID].flag_realign==1)
 			{
-				flag_find=0;
-				if(readslist[readID].flag_realign==1)
-				{
-					fout<<">"<<readname.c_str()<<endl;
-					readname.clear();
-					while(!feof(f_read))
-					{
-						ch= fgetc(f_read);
-						fout<<ch;
-						if(ch=='\n')
-						{
-							break;
-						}
-					}	
-				}
-				
-				else
-				{
-					readname.clear();
-					while(!feof(f_read))
-					{
-						ch= fgetc(f_read);
-						if(ch=='\n')
-						{
-							break;
-						}
-					}
-				}
-			}
-			else
-			{
+				cout<<">"<<readname.c_str()<<endl;
+				fout<<">"<<readname.c_str()<<endl;
 				readname.clear();
-				while(!feof(f_read))
-				{
-					ch= fgetc(f_read);
-					if(ch=='\n')
-					{
-						break;
-					}
-				}
+				fout<<read.c_str()<<endl;
 			}
 		}
-		else if(ch!='>'&&ch!='\n')
-		{
-			readname+=ch;
-
-		}
-		ch= fgetc(f_read);
 	}
+	fin.clear();  
+    fin.close();  
+    fout.clear();  
+    fout.close();  
 }
+
 
 void print_clique_matrix()
 {
@@ -2328,96 +2355,216 @@ void print_clique_matrix()
 	ofstream fout1;
 	int flag=0;
 	fout1.open(filename5,ios::trunc);
-	read_node * r;
-
+	matrix_node * m;
 	for(int i=0;i<count_cliques;i++)
 	{
-		for(int j=0;j<count_cliques;j++)
+		m = clique_matrix1[i].next;
+		fout1<<i<<" "<<clique_matrix1[i].clique_name<<" & ";
+
+		while(m!=NULL)
 		{
-			fout1<<clique_matrix1[i][j].clique_name1.c_str()<<" "<<clique_matrix1[i][j].clique_ID1<<" & "<<clique_matrix1[i][j].clique_name2.c_str()<<" "<<clique_matrix1[i][j].clique_ID2<<" "<<clique_matrix1[i][j].num_reads<<" ";
-			r=clique_matrix1[i][j].next;
-			while(r!=NULL)
+			fout1<<m->clique_name<<" read num = "<<" "<<m->read_num<<" ";
+			read_node *r;
+			r = m->next_read_node;
+			while (r!=NULL)
 			{
 				fout1<<"("<<r->read<<" "<<" "<<r->read_ID<<") ";
-				r=r->next;
+				r = r->next;
 			}
-			fout1<<endl;
+			m=m->next_matrix_node;
 		}
 	}
+	fout1.close();
 }
 
-extern void combine()
+int countFileLineNum(string filename)
+{
+	ifstream aFile(filename.c_str());
+	int lines_count = 0;
+	string line;
+	while(std::getline(aFile,line))
+		++ lines_count;
+
+	return lines_count;
+}
+
+void init_global_variables(int flag)
+{
+	if(flag==1)
+	{
+		num_clique = countFileLineNum(cliquefile);	
+		num_read = countFileLineNum(readfile) / 2;
+		cout<<"num_clique "<<num_clique<<endl;
+		cout<<"num_read "<<num_read<<endl;
+	}
+	else if(flag==2)
+	{
+		num_clique = countFileLineNum(cliquefile);	
+		num_read = countFileLineNum(rawreadfile) / 2;
+		if(num_clique < 100)
+			num_clique = num_read;
+		cout<<"num_clique "<<num_clique<<endl;
+		cout<<"num_read "<<num_read<<endl;
+	}
+	cliquelist = new clique_list[num_clique];
+	cliqueslist = new clique_list[num_clique];
+	
+	readlist = new read_list[num_read];
+	readslist = new read_list[num_read];
+	readslist2 = new read_list[num_read];
+
+	//combine_list = new combine_read_node[num_read];
+
+	//clique_matrix1 = new clique_matrix*[num_clique];
+	//for(int i = 0; i < num_clique; i++)
+	//	clique_matrix1[i] = new clique_matrix[num_clique];
+}
+
+void free_memory()
+{
+	delete[] cliquelist;
+	delete[] cliqueslist;
+	delete[] readlist;
+	delete[] readslist;
+	delete[] readslist2;
+	//delete[] combine_list;
+
+	//for(int i = 0; i < num_clique; i++)
+	//	delete[] clique_matrix1[i];
+	//delete[] clique_matrix1;
+}
+
+void combine()
 {
 	if(workflow==1)
 	{
-		//cout<<"workflow=1"<<endl;
+		cout<<"workflow=1"<<endl;
+
+		init_global_variables(1);
+		cout<<"finish init global variables"<<endl;
+
 		init();
-		//cout<<"finish init"<<endl;
+		cout<<"finish init"<<endl;
 		readm4file();
-		//cout<<"finish readm4file"<<endl;
+		cout<<"finish readm4file"<<endl;
 		readcliquefile();
-		//cout<<"finish readcliquefile"<<endl;
+		cout<<"finish readcliquefile"<<endl;
 		insertd_cliquelist();
-		//cout<<"finish insertd_cliquelist"<<endl;
+		cout<<"finish insertd_cliquelist"<<endl;
 		combine_clique();
-		//cout<<"finish combine_clique"<<endl;
+		cout<<"finish combine_clique"<<endl;
 		insertd_readslist();
-		//cout<<"finish insertd_readslist"<<endl;
+		cout<<"finish insertd_readslist"<<endl;
 		readedgefile();
-		//cout<<"finish readedgefile"<<endl;
+		cout<<"finish readedgefile"<<endl;
 		readreadfile();
-		//cout<<"finish readreadfile"<<endl;
+		cout<<"finish readreadfile"<<endl;
 		insertflag_readslist();
-		//cout<<"finish insertflag_readslist"<<endl;
-		//printcliqueslist();
-		//cout<<"finish printcliqueslist"<<endl;
-		//printreadslist();
-		//cout<<"finish printreadslist"<<endl;
-		create_clique_matrix();
-		//cout<<"finish create_clique_matrix"<<endl;
-		insert_clique_matrix();
-		//cout<<"finish insert_clique_matrix"<<endl;
-		//print_clique_matrix();
-		//cout<<"finish print_clique_matrix"<<endl;
+		cout<<"finish insertflag_readslist"<<endl;
+		printcliqueslist();
+		cout<<"finish printcliqueslist"<<endl;
+		printreadslist();
+		cout<<"finish printreadslist"<<endl;
+		cout<<"count_cliques = "<<count_cliques<<endl;
 		readsalign();
-		//cout<<"finish readsalign"<<endl;
+		cout<<"finish readsalign"<<endl;
 		insert_readnum();
-		//cout<<"finish insert_readnum"<<endl;
+		cout<<"finish insert_readnum"<<endl;
+		create_clique_matrix();
+		cout<<"finish create_clique_matrix"<<endl;
+		insert_clique_matrix();
+		cout<<"finish insert_clique_matrix"<<endl;
+		print_clique_matrix();
+		cout<<"finish print_clique_matrix"<<endl;
+		
 		combine_cliques();
-		//cout<<"finish combine_cliques"<<endl;
+		cout<<"finish combine_cliques"<<endl;
 		write_combinedreads();
+		
+		free_memory();
+	
 	}
 	if(workflow==2)
 	{
+		cout<<"workflow=2"<<endl;
+
+		init_global_variables(2);
+		cout<<"init global variables"<<endl;
+
 		init();
+		cout<<"init"<<endl;
+
 		readcliquefile();
+		cout<<"readcliquefile"<<endl;
+
 		insertd_cliquelist();
+		cout<<"insertd_cliquelist"<<endl;
+
 		combine_clique();
+		cout<<"combine_clique"<<endl;
+
 		insertd_readslist();
+		cout<<"insertd_readslist"<<endl;
+
 		readedgefile();
+		cout<<"readedgefile"<<endl;
+
 		readreadfile();
+		cout<<"readreadfile"<<endl;
+
 		insertflag_readslist();
+		cout<<"insertflag_readslist"<<endl;
+
 		//printcliqueslist();
 		//printreadslist();
 		create_clique_matrix();
+		cout<<"create_clique_matrix"<<endl;
+
 		insert_clique_matrix();
+		cout<<"insert_clique_matrix"<<endl;
+
 		//print_clique_matrix();
 		readm4file();
+		cout<<"readm4file"<<endl;
+
 		readsalign();
+		cout<<"readsalign"<<endl;
+
 		combine_cliques();
+		cout<<"combine_cliques"<<endl;
+
 		//write_combinedreads();
 		//printm4infoslist();
 
 		insert_readnum();	
+		cout<<"insert_readnum"<<endl;
+
 
 	/////////////////////////////////////
 		create_readslist2();
+		cout<<"create_readslist2"<<endl;
+
 		create_region2();
+		cout<<"create_region2"<<endl;
+
 		readm4file2();
+		cout<<"readm4file2"<<endl;
+
 		ali_raw_co();
+		cout<<"ali_raw_co"<<endl;
+
 		readsalign2();
+		cout<<"readsalign2"<<endl;
+
 		insertflag_readslist2();
+		cout<<"insertflag_readslist2"<<endl;
+
 		//printreadslist2();
 		HASAL2();
+		cout<<"HASAL2"<<endl;
+
+		free_memory();
+
 	}
+	
 }
