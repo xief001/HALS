@@ -25,6 +25,9 @@ HALS is under the [Artistic License 2.0](http://opensource.org/licenses/Artistic
    ```
 
    <p>Options (default value):<br>
+   -c (100)<br>
+   Coverage of the long reads.<br>
+
    -α1 (0.5)<br>
    Fraction value to distinguish between the cases (i)/(ii) and (iii).<br>
    -α2 (0.5)<br>
