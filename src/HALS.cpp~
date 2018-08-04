@@ -9,7 +9,7 @@ string printcliques;
 string printmatrix;
 string printm4info;
 string printm4info2;
-string C0str;
+
 string readfile;
 string rawreadfile;
 string m4file ;
@@ -25,7 +25,6 @@ double d1=0.05;
 double d2=0.2;
 int X=1;
 int Y=500;
-int C0=100;
 int L=10000;
 int workflow=0;
 int once_num=0;
@@ -48,11 +47,6 @@ int parseargs(int argc, char * argv[])
 		{
 			if(argv[i][0]=='-')
 			{
-				if(argv[i][1]=='C')//workrflow1 2
-                                {
-                                        C0str=argv[++i];
-                                        continue;
-                                }
 				if(argv[i][1]=='c')//workrflow1 2
 				{
 					cliquefile=argv[++i];
