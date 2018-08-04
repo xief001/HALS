@@ -7,6 +7,7 @@ import datetime
 
 parser = argparse.ArgumentParser(description='runHALC.py')
 parser.add_argument('long_read_path', metavar='long_read.fa', help="The path to long_read.fa")
+parser.add_argument('-c', help="Coverage of the long reads.(100)", default=100,type=int)
 parser.add_argument('-a1',help="Fraction value to distinguish between the cases (i)/(ii) and (iii).(0.5)", default=0.5,type=float)
 parser.add_argument('-a2',help="Fraction value to distinguish between the cases (i) and (ii).(0.5)", default=0.5,type=float)
 parser.add_argument('-b1', help="Difference value of alignment identities to find the correct aligned path.(0.05)", default=0.05,type=float)
@@ -245,7 +246,7 @@ if start_from_step <= 2:
 
 ##########################################
 
-	HALS2_command = 'HALS 2 '+ str(FN1) +  ' -c ' + temp_dir + '/step2/' + 'clique2.txt ' + ' -e ' + temp_dir + '/step2/' + 'edge2.txt ' + ' -r ' + temp_dir + '/step1/' + 'allreads0_corrected_filted1.fasta ' + ' -m ' + temp_dir + '/step2/' +'allreads0_corrected_filted1.fasta.m4 ' + ' -de2 ' + temp_dir + '/step2/' +'deletepairs2.txt ' + ' -de3 ' + temp_dir + '/step2/' + 'deletepairs3.txt '+ ' -w ' + temp_dir + '/step2/' + 'cor_incor.fasta ' + ' -g ' + temp_dir + '/step2/' + 'cor_incor.fasta.m4 '+'-a1 '+str(args.a1)+' -a2 '+str(args.a2)+' -b1 '+str(args.b1)+' -b2 '+str(args.b2)
+	HALS2_command = 'HALS 2 '+ str(FN1) +  ' -c ' + temp_dir + '/step2/' + 'clique2.txt ' + ' -e ' + temp_dir + '/step2/' + 'edge2.txt ' + ' -r ' + temp_dir + '/step1/' + 'allreads0_corrected_filted1.fasta ' + ' -m ' + temp_dir + '/step2/' +'allreads0_corrected_filted1.fasta.m4 ' + ' -de2 ' + temp_dir + '/step2/' +'deletepairs2.txt ' + ' -de3 ' + temp_dir + '/step2/' + 'deletepairs3.txt '+ ' -w ' + temp_dir + '/step2/' + 'cor_incor.fasta ' + ' -g ' + temp_dir + '/step2/' + 'cor_incor.fasta.m4 ' +'-C ' + str(args.c)  +'-a1 '+str(args.a1)+' -a2 '+str(args.a2)+' -b1 '+str(args.b1)+' -b2 '+str(args.b2)
 	print ('Running command: ' + HALS2_command)
 	err = os.system(HALS2_command)
 	if err != 0:
