@@ -19,7 +19,7 @@ FILE* f_clique;
 FILE* f_edge;
 FILE* f_read;
 FILE* f_m4;
-int C0=0;
+extern int C0;
 //clique_matrix clique_matrix1[num_clique][num_clique];
 //vector < vector <clique_matrix> > clique_matrix1;
 vector <matrix_list> clique_matrix1;
