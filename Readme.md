@@ -1,6 +1,6 @@
-### Overview
-HALS has been renamed FLAS and moved to this site: [https://github.com/baoe/flas](https://github.com/baoe/flas)!.
+### HALS has been renamed FLAS and moved to this site: [https://github.com/baoe/flas](https://github.com/baoe/flas)!
 
+### Overview
 HALS is software that makes self-correction for long reads with fast speed and high  throughput.
 
 ### Copy right
